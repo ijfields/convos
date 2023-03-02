@@ -1,26 +1,4 @@
 const markdownElement = document.getElementById('markdown');
-/*
-function loadMarkdownFile(filename) {
-  const url = filename + '.md';
-
-  fetch(url)
-    .then(response => response.text())
-    .then(text => {
-      const html = marked(text);
-      markdownElement.innerHTML = html;
-
-      const resizeMessage = {
-        type: 'resize',
-        height: markdownElement.offsetHeight
-      };
-
-      window.parent.postMessage(resizeMessage, '*');
-    })
-    .catch(error => {
-      console.error(error);
-    });
-}
-*/
 
 function loadMarkdown(filename) {
   // Fetch the markdown file and convert it to HTML
@@ -29,7 +7,7 @@ function loadMarkdown(filename) {
     .then(text => {
       const converter = new showdown.Converter();
       const html = converter.makeHtml(text);
-      markdown.innerHTML = html;
+      markdownElement.innerHTML = html;
     });
 }
 
@@ -46,7 +24,7 @@ function loadMarkdownList() {
         // If the file has the .md extension, add it to the list
         if (filename.endsWith('.md')) {
           const listItem = document.createElement('li');
-          listItem.innerHTML = `<a href="javascript:loadMarkdown('markdown/${filename}');">${filename}</a>`;
+          listItem.innerHTML = `<a href="#markdown/${filename}">${filename}</a>`;
           list.appendChild(listItem);
         }
       }
@@ -56,14 +34,14 @@ function loadMarkdownList() {
 loadMarkdownList();
 
 window.addEventListener('hashchange', event => {
-  const filename = event.newURL.split('#')[1];
+  const filename = event.newURL.split('#markdown/')[1];
 
   if (filename) {
-    loadMarkdownFile(filename);
+    loadMarkdown(`markdown/${filename}`);
   }
 });
 
 if (window.location.hash) {
-  const filename = window.location.hash.substring(1);
-  loadMarkdownFile(filename);
+  const filename = window.location.hash.split('#markdown/')[1];
+  loadMarkdown(`markdown/${filename}`);
 }
